@@ -1,0 +1,266 @@
+﻿<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="Sprache Übersetzer. Languages translator. Traductor de lenguaje.">
+        <meta name="author" content="Pizza!">
+        <link rel="shortcut icon" href="content/img/favicon.png">
+
+        <title>Language</title>
+
+        <!-- Bootstrap core CSS -->
+        <link href="content/lib/bootstrap-4.5.0-dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="content/css/offcanvas.css" rel="stylesheet">
+
+        <!-- Custom styles for this template -->
+        <!--<link href="Content/css/style.css" rel="stylesheet">-->
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="Scripts/Bootstrap/js/html5shiv.js"></script>
+            <script src="Scripts/Bootstrap/js/respond.min.js"></script>
+        <![endif]-->
+        <style type="text/css">
+            main { height: 100%; margin: 0; min-height: 100%; overflow: auto; padding: 7rem 0 0; position: absolute; top: 0; width: 100%; }
+            #div_content { margin: 0; max-width: 99% !important; overflow: auto !important; padding: 0px; position: relative !important; z-index: 0 ! important; }
+            .bootstrap4-typeahead {
+                display: block;
+                margin-top: 2.33rem;
+                position: absolute;
+                width: 100%;
+            }
+            .bootstrap4-typeahead > ul.list-group > li.list-group-item {
+                cursor: pointer;
+            }
+            .bootstrap4-typeahead > ul.list-group > li.list-group-item:hover {
+                background-color: #f8f9fa;
+            }
+            .footer { color: #999999; }
+        </style>
+    </head>
+    <body>
+
+        <!-- Init NavBar -->
+        <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
+            <div class="container">
+            <a class="navbar-brand mr-auto mr-lg-0" href="#">
+                <img alt="book" src="content/img/dictionary32x32.png">
+            </a>
+            <button class="navbar-toggler p-0 border-0" type="button" data-toggle="offcanvas">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="navbar-collapse offcanvas-collapse" id="navbarsExampleDefault">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">Deutsch <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://mein-deutschbuch.de/startseite.html" target="blank">Grammatik Online</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://de.pons.com/" target="blank">Online-Wörterbuch</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Anderes</a>
+                        <div class="dropdown-menu" aria-labelledby="dropdown01">
+                            <a class="dropdown-item" href="http://www.goethe.de" target="blank">Das Goethe-Institut</a>
+                            <a class="dropdown-item" href="http://www.dw.de" target="blank">Nachrichten</a>
+                        </div>
+                    </li>
+                </ul>
+                <form class="form-inline my-2 my-lg-0">
+                    <select class="form-control mr-sm-2" id="select_language">
+                        <option value="">- Sprache ändern -</option>
+                        <option value="de" selected="selected">Deutsch</option>
+                        <option value="en">Englisch</option>
+                        <option value="es">Spanisch</option>
+                    </select>
+                    
+                    <button class="btn btn-outline-success my-2 my-sm-0" id="button_continue" type="button">Fortsetzen</button>
+                </form>
+            </div>
+            </div>
+        </nav>
+        <!-- End NavBar -->
+    
+
+        <main role="main">
+            <div class="container up">
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="input-group">
+                                <input id="input_search" type="text" class="form-control" placeholder="Suchen" 
+                                    aria-label="Text input with dropdown button">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary dropdown-toggle" id="button_destination" type="button" 
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Auf: Spanisch</button>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" href="#" id="en" rel="button_destination_language">Auf: Englisch</a>
+                                        <a class="dropdown-item active" href="#" id="es" rel="button_destination_language">Auf: Spanisch</a>
+                                        <div role="separator" class="dropdown-divider"></div>
+                                        <a class="dropdown-item" href="#">Abbrechen</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div id="div_content">
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+
+            </div>
+            <footer class="footer mt-auto py-3">
+                <div class="container text-center">
+                </div>
+            </footer>
+        </main>
+
+        <script src="content/lib/jquery-3.5.1.slim/jquery.min.js"></script>
+        <script src="content/lib/popper-1.11.0/popper.min.js"></script>
+        <script src="content/lib/bootstrap-4.5.0-dist/js/bootstrap.min.js"></script>
+        <script src="resource/list.json" id="json_list" type="text/javascript"></script>
+        <script>
+            // Bootstrap 4 Typeahead
+            $.fn.typeahead = function(params = {}) {
+                function onKeyUp() {
+                    $(`#${params.content}`).html('');
+                    $(this).parent().find('.bootstrap4-typeahead').html('')
+
+
+                    if ($(this).val() === '') 
+                        return;
+
+                    var value = $(this).val(),
+                        index = 0,
+                        result = [];
+
+                    for (var i = 0; i < params.data.length; i++) {
+                        if (index > 9)
+                            break;
+                        else if (!params.data[i].name.toLowerCase().includes(value.toLowerCase().trim()))
+                            continue;
+
+                        result.push({
+                            name: params.data[i].name
+                        });
+
+                        index++;
+                    }
+
+                    if (result.length === 0)
+                        return;
+
+                    let html = 
+                        `<div class="bootstrap4-typeahead">
+                            <ul class="list-group">`;
+
+                    result.forEach(el => {
+                        html += `<li class="list-group-item" onclick="onClickItem(this)">${el.name}</li>`;
+                    });
+
+                    html += `</div></ul>`;
+                    $(this).parent().append(html);
+                }
+
+                function delay(fn, ms) {
+                    let timer = 0
+                    return function(...args) {
+                        clearTimeout(timer)
+                        timer = setTimeout(fn.bind(this, ...args), ms || 0)
+                    }
+                }
+
+                $(this).on('keyup', delay(onKeyUp, 300))
+            }
+            var app = {
+                source: 'de',
+                destination: 'es',
+            };
+            var config = {
+                de_default_destination: 'es',
+                en_default_destination: 'es',
+                es_default_destination: 'en'
+            };
+            function onButtonContinueClick() {
+                var language = $('#select_language').val();
+                console.log(language)
+            }
+            function onClickItem(item) {
+                var search = list.find(function(data) {
+                    return data.name.includes($(item).html())
+                });
+
+                var html = '';
+
+                Object.keys(search).forEach(function(k) {
+                    if (!k.includes('content'))
+                        return true;
+
+                    html += search[k]
+                });
+
+                var parent = $(item).parent().parent();
+                parent.html('');
+                $(parent).parent().find('input').val(search.name);
+                $('#div_content').html(html);
+            }
+            function initLanguage(language) {
+                if (language === 'de') 
+                    app = {
+                        source: 'de',
+                        destination: config.de_default_destination
+                    }
+
+            }
+            $('document').ready(function() {
+
+
+                $('footer > div').html(`&#64;${new Date().getFullYear()}`)
+
+                $(function () {
+                    'use strict'
+
+                    $('[data-toggle="offcanvas"]').on('click', function () {
+                        $('.offcanvas-collapse').toggleClass('open');
+                    });
+                });
+
+
+                $('#input_search').typeahead({
+                    data: list,
+                    content: 'div_content'
+                })
+
+
+                $('#button_continue').on('click', onButtonContinueClick);
+
+                $('[rel="button_destination_language"]').on('click', function(e) {
+                    var selectedLang = $(e.target).attr('id'); 
+                    if (app.source === selectedLang)
+                        return;
+
+                    $('[rel="button_destination_language"]').removeClass('active')
+                    $(e.target).addClass('active')
+                    app.source = selectedLang;
+                    selectedLang = $(e.target).html()
+                    $('#button_destination').html(selectedLang)
+
+                    return;
+                });
+            });
+        </script>
+    </body>
+</html>
